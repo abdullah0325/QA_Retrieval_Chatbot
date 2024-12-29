@@ -1,0 +1,28 @@
+Your code is well-structured but has a few areas that might cause issues. I'll highlight possible problems without significantly changing your code.
+
+Issues Identified:
+Frontend (Streamlit):
+
+uploaded_file in st.file_uploader: The accept_multiple_files=True parameter allows multiple file uploads, but you are treating uploaded_file as a single file. This will raise an error.
+Fix: Use a loop to handle multiple uploaded files or restrict the uploader to a single file.
+File Content Type: Ensure uploaded_file.content_type is correctly accessed, as it may not always provide valid content types for all file formats.
+Backend (FastAPI):
+
+get_file_loaders Function:
+It processes only the last uploaded file due to overwriting the loader in the loop. Ensure all uploaded files are processed.
+File Upload Path:
+No validation is performed for file.filename, which can lead to directory traversal attacks.
+Global Variable vectorstore:
+Using global vectorstore for state management can lead to concurrency issues if multiple users access the app simultaneously.
+utils.py:
+
+get_file_loaders Logic:
+The function may return an incorrect loader if no valid file type matches.
+Handling extensions dynamically is better for scalability.
+create_vectorstore:
+If QDRANT_URL or QDRANT_KEY is invalid, the app will fail without handling this gracefully.
+generate_response:
+The rag_chain.invoke(question) might fail if the retriever returns no documents or the LLM model has an issue.
+Highlighted Updates:
+1. Frontend:
+Updated handling of st.file_uploader for multiple files:
